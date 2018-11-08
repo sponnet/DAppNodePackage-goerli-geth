@@ -4,6 +4,8 @@ FROM golang:1.11-alpine as builder
 RUN apk add --no-cache make gcc musl-dev linux-headers git jq nodejs npm yarn
 
 COPY src /usr/src
+RUN mkdir /usr/src/app
+COPY boot.sh /usr/src/app
 
 WORKDIR /usr/src/admin-server
 RUN ls -l
@@ -28,11 +30,12 @@ RUN cat /usr/src/app/testnet/bootnodes.txt | jq -R '[.]' | jq -s 'add' > /goerli
 # Pull Geth into a second stage deploy alpine container
 FROM alpine:latest
 
-RUN apk add --no-cache ca-certificates
+RUN apk add --no-cache ca-certificates nodejs
 COPY --from=builder /usr/src/app/go-ethereum/build/bin/geth /usr/local/bin/
 COPY --from=builder /goerli /goerli 
 COPY --from=builder /usr/src/admin-server /usr/share/admin-server
 COPY --from=builder /usr/src/admin-client/build /usr/share/admin-client/build
+COPY --from=builder /usr/src/app/boot.sh /usr/share/app
 
 EXPOSE 4567 30303 30303/udp 30304/udp
-ENTRYPOINT node /usr/src/admin-server/server.js && geth --datadir /goerli --rpc --rpccorsdomain "*" --rpcaddr="0.0.0.0" --rpcvhosts "*" --ws --wsaddr="0.0.0.0" --wsorigins="*" --networkid=6284 --password /usr/src/admin-server/data/password --keystore /usr/src/admin-server/data/keystore $EXTRA_OPTS
+ENTRYPOINT /usr/share/app/boot.sh
