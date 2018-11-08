@@ -35,4 +35,4 @@ COPY --from=builder /usr/src/admin-server /usr/share/admin-server
 COPY --from=builder /usr/src/admin-client/build /usr/share/admin-client/build
 
 EXPOSE 4567 30303 30303/udp 30304/udp
-ENTRYPOINT geth --datadir /goerli --rpc --rpccorsdomain "*" --rpcaddr="0.0.0.0" --rpcvhosts "*" --ws --wsaddr="0.0.0.0" --wsorigins="*" --networkid=6284 --password /usr/src/admin-server/data/password --keystore /usr/src/admin-server/data/keystore $EXTRA_OPTS
+ENTRYPOINT node /usr/src/admin-server/server.js && geth --datadir /goerli --rpc --rpccorsdomain "*" --rpcaddr="0.0.0.0" --rpcvhosts "*" --ws --wsaddr="0.0.0.0" --wsorigins="*" --networkid=6284 --password /usr/src/admin-server/data/password --keystore /usr/src/admin-server/data/keystore $EXTRA_OPTS
