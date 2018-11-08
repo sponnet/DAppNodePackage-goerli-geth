@@ -1,9 +1,19 @@
 # Build Geth in a stock Go builder container
 FROM golang:1.11-alpine as builder
 
-WORKDIR /usr/src/app
+RUN apk add --no-cache make gcc musl-dev linux-headers git jq nodejs npm yarn
 
-RUN apk add --no-cache make gcc musl-dev linux-headers git jq
+COPY src /usr/src
+
+WORKDIR /usr/src/admin-server
+RUN ls -l
+RUN npm install
+
+WORKDIR /usr/src/admin-client
+RUN yarn install
+RUN yarn build
+
+WORKDIR /usr/src/app
 
 ARG BRANCH=v1.8.17
 
@@ -21,6 +31,8 @@ FROM alpine:latest
 RUN apk add --no-cache ca-certificates
 COPY --from=builder /usr/src/app/go-ethereum/build/bin/geth /usr/local/bin/
 COPY --from=builder /goerli /goerli 
+COPY --from=builder /usr/src/admin-server /usr/share/admin-server
+COPY --from=builder /usr/src/admin-client/build /usr/share/admin-client/build
 
-EXPOSE 30303 30303/udp 30304/udp
-ENTRYPOINT geth --datadir /goerli --rpc --rpccorsdomain "*" --rpcaddr="0.0.0.0" --rpcvhosts "*" --ws --wsaddr="0.0.0.0" --wsorigins="*" --networkid=6284 $EXTRA_OPTS
+EXPOSE 4567 30303 30303/udp 30304/udp
+ENTRYPOINT geth --datadir /goerli --rpc --rpccorsdomain "*" --rpcaddr="0.0.0.0" --rpcvhosts "*" --ws --wsaddr="0.0.0.0" --wsorigins="*" --networkid=6284 --password /usr/src/admin-server/data/password --keystore /usr/src/admin-server/data/keystore $EXTRA_OPTS
