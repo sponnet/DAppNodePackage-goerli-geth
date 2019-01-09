@@ -37,5 +37,5 @@ COPY --from=builder /usr/src/admin-server /usr/share/admin-server
 COPY --from=builder /usr/src/admin-client/build /usr/share/admin-client/build
 COPY --from=builder /usr/src/app/boot.sh /usr/share/app/boot.sh
 
-EXPOSE 4567 30303 30303/udp 30304/udp
+EXPOSE 8545 8546 80 30303 30303/udp 30304/udp
 ENTRYPOINT . /usr/share/app/boot.sh

@@ -1,21 +1,19 @@
 {
   "name": "goerli.avadobox.eth",
-  "version": "0.1.8",
+  "version": "0.1.6",
   "description": "AVADO Geth version for Görli Testnet. (Validator edition) - A cross-client proof-of-authority ethereum testnet",
   "avatar": "avatar.png",
   "type": "library",
   "image": {
-    "path": "goerli.avadobox.eth_0.1.8.tar.xz",
-    "hash": "/ipfs/QmTL9PVTR17WfmCBq7fmWdRqdU4GWDjBMpZytAdhvt7FVN",
-    "size": 21556492,
+    "path": "goerli.avadobox.eth_0.1.5.tar.xz",
+    "hash": "/ipfs/QmeUjfsqJBCcDtDrAFbuNKBFDWkgxUrVWYyKMJV4YAh1pG",
+    "size": 21561728,
     "restart": "always",
     "volumes": [
       "goerli:/goerli"
     ],
     "ports": [
-      "80:80",
-      "8545:8545",
-      "8546:8546",
+      "80:4567",
       "53535:30303",
       "53535:30303/udp",
       "53534:30304/udp"

@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import axios from "axios";
 
-const endpoint = "/upload";
+const endpoint = "/file";
 
 class Uploader extends Component {
   constructor(props) {
